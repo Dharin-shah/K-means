@@ -1,7 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
-
 public class Nodes {
 	static public final int shapeRadius = 2;
 	   Color color;

@@ -1,5 +1,4 @@
 
-
 public class Gaussian {
    int mux;
    int muy;
