@@ -6,36 +6,34 @@ import java.applet.*;
 
 public class KMeans extends Applet implements Runnable {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4621753965498981175L;
-	/*static Random rand = new Random();
-	Graph nodes[];
-	Graph cluster[];*/
-	ArrayList<Nodes> featureVector;		//feature Vector
+	private static final long serialVersionUID = 4621753965498981175L;  // for networking application - IGNORE
+	ArrayList<Nodes> featureVector;		//feature Vector (technically array)
 	ArrayList<Cluster> cluster;		//list of clusters
-	Choice choicePanel;
+	Choice choicePanel;  
 	int numOfClusters;
-	Button start,reset,run,drawFeatures,restart;
-	
+	Button start,reset,run,drawFeatures,restart; 
+	Nodes nodes;
+	Cluster clust;
 	Thread thread;
 	int step; //current step of program
 	boolean abort;
 	static Random random;
 	
-	public void init(){
+	public void init(){                                  //applet execution initialization state
 		random = new Random();	
 		cluster = new ArrayList<Cluster>();
 		featureVector = new ArrayList<Nodes>();
 		this.setPreferredSize(new Dimension(600,600));
-		
+		nodes = new Nodes();
+		clust = new Cluster();
+		/* buttons created */
 		start = new Button("Start");
 		reset = new Button("Reset");
 		run = new Button("Run");
 		restart = new Button("Restart");
 		drawFeatures = new Button("Draw Features");
 		
+		/* button added to applet */
 		this.add(start);
 		this.add(restart);
 		this.add(reset);
@@ -46,7 +44,7 @@ public class KMeans extends Applet implements Runnable {
 		run.setEnabled(false);
 		restart.setEnabled(false);
 		
-		choicePanel = new Choice();
+		choicePanel = new Choice(); //choice panel - seleting number of gaussian clusters
 		
 		for(int i=2;i<8;i++)
 			choicePanel.add(i+"");
@@ -56,23 +54,15 @@ public class KMeans extends Applet implements Runnable {
 		numOfClusters = 2;
 	}
 	
-	public void paint(Graphics g){
+	public void paint(Graphics g){   /* graphics object created by java system when created an applet, object therefore passed through function paint */
 		g.setColor(Color.BLACK);
 		g.drawRect(0,50,500,300);
-		Nodes s = new Nodes();
-		//int numOfVectors = 1000;
 		int numOfVectors = featureVector.size();
-	
-		for(int i=0;i<numOfVectors;i++){
+		for(int i=0;i<numOfVectors;i++){     
 			s = featureVector.get(i);
-			//s.y = randBetween(320,70);
-			//featureVector.add(s);
 			s.draw(g);
 		}
-	
-		if(step != -1){
-			Cluster clust = new Cluster();
-			//int numOfCusters = cluster.size();
+		if(step != -1){                               
 			for(int i=0;i<cluster.size();i++){
 				clust = cluster.get(i);
 				clust.draw(g);
@@ -84,8 +74,7 @@ public class KMeans extends Applet implements Runnable {
 		return random.nextInt((max-min)+1)+min;
 	}
 	
-	@SuppressWarnings("deprecation")
-	public void run() {
+	public void run() {       //called when thread started
 		while (true) {
             if      (step ==-1) this.step1();
             else if (step == 1) this.step2();
@@ -97,26 +86,23 @@ public class KMeans extends Applet implements Runnable {
                 step = 5;
                 repaint();
                 thread.stop();
-                //Thread.sleep(100000);
             }
             else if ((step == 4) && (abort==false))   
             step2();   
-            
             repaint();
 			try{			
-				Thread.sleep(100);
+				Thread.sleep(100);  // for animation
 			}
 			catch (InterruptedException e) {
 			}
 		}
 	}
 	
-	public boolean action(Event event,Object object){
+	public boolean action(Event event,Object object){   //action listener - buttons,mouse,keyboard
 		
 		if(event.target==start){
 			System.out.print("start");
 			start.setLabel("Step");
-			//step1();
 			switch(step){
 			case -1:step1();
 					break;
@@ -135,7 +121,6 @@ public class KMeans extends Applet implements Runnable {
 						step2();
 					break;
 			}
-			
 			repaint();
 			return true;
 			}
@@ -153,28 +138,22 @@ public class KMeans extends Applet implements Runnable {
 		if(event.target==drawFeatures){
 			reset();
 			numOfClusters = Integer.parseInt(choicePanel.getSelectedItem());
-			//System.out.println(numOfClusters+1);
 			//gaussian distributed random numbers
 			//Random.nextGaussian() not working
 			
 			ArrayList<Gaussian> gaus = new ArrayList<Gaussian>();
 			for(int i=0;i<numOfClusters;i++){
 				Gaussian gau = new Gaussian();
-				//gau.mux = 50+Math.abs(random.nextInt() % 480);
 				gau.mux = randBetween(480,30);
-			//	gau.mux = (int)random.nextGaussian(480-30)+30;
 				gau.muy = randBetween(280,70);
 				gau.sigma = 10+Math.abs(10*random.nextDouble());
 				gaus.add(gau);
 			}
-			//display(gaus);
-			
-			
 			reset.setEnabled(true);
 			start.setEnabled(true);
 			run.setEnabled(true);
 			
-			for(int i=0;i<numOfClusters;i++){
+			for(int i=0;i<numOfClusters;i++){         //gaussian distrbution per cluster
 				Gaussian temp = gaus.get(i);
 				for(int j=0;j<2000/numOfClusters;j++){
 					double r = 5*temp.sigma*Math.pow(random.nextDouble(),2);
@@ -199,7 +178,6 @@ public class KMeans extends Applet implements Runnable {
 			step = -1;
 			abort = false;
 			cluster.clear();
-			//int numOfFeatures = featureVector.size();
 			Nodes temp;
 			for(int i=0;i<featureVector.size();i++){
 				temp = featureVector.get(i);
@@ -222,16 +200,7 @@ public class KMeans extends Applet implements Runnable {
 		return true;
 			
 	}
-		
 	
-
-	private void display(ArrayList<Gaussian> gaus) {
-		for(int i=0;i<gaus.size();i++){
-			System.out.println(gaus.get(i));
-		}
-		
-	}
-
 	private void reset() {
 		step = -1;
 		abort = false;
@@ -250,7 +219,6 @@ public class KMeans extends Applet implements Runnable {
 	    repaint();
 	}
 	
-
 	private boolean positionAllowed(int x, int y) {
 		if((x>=5)&&(y>=55)&&(x<500)&&(y<300))
 			return true;
