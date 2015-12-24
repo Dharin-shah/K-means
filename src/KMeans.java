@@ -15,6 +15,7 @@ public class KMeans extends Applet implements Runnable {
 	Nodes nodes;
 	Cluster clust;
 	Thread thread;
+	Point p;
 	int step; //current step of program
 	boolean abort;
 	static Random random;
@@ -26,6 +27,7 @@ public class KMeans extends Applet implements Runnable {
 		this.setPreferredSize(new Dimension(600,600));
 		nodes = new Nodes();
 		clust = new Cluster();
+		p = new Point();
 		/* buttons created */
 		start = new Button("Start");
 		reset = new Button("Reset");
@@ -281,7 +283,6 @@ public class KMeans extends Applet implements Runnable {
 			Cluster tempCluster;
 			Nodes temp;
 			double change = 0.0;
-			Point p = new Point();
 			for(int i=0;i<cluster.size();i++){
 				tempCluster = cluster.get(i);
 				p.x=0;
