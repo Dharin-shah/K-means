@@ -2,8 +2,6 @@ import java.util.*;
 import java.awt.*;
 import java.applet.*;
 
-
-
 public class KMeans extends Applet implements Runnable {
 	
 	private static final long serialVersionUID = 4621753965498981175L;  // for networking application - IGNORE
@@ -56,7 +54,7 @@ public class KMeans extends Applet implements Runnable {
 		numOfClusters = 2;
 	}
 	
-	public void paint(Graphics g){   /* graphics object created by java system when created an applet, object therefore passed through function paint */
+	public void paint(Graphics g){   // graphics object created by java system when created an applet, object therefore passed through function paint */
 		g.setColor(Color.BLACK);
 		g.drawRect(0,50,500,300);
 		int numOfVectors = featureVector.size();
@@ -174,7 +172,6 @@ public class KMeans extends Applet implements Runnable {
 			}
 			repaint();
 			return true;
-			
 		}
 		if(event.target==restart && step!=-1){
 			step = -1;
@@ -227,84 +224,82 @@ public class KMeans extends Applet implements Runnable {
 		return false;
 	}
 
-		private void step1() {
-		abort = false;
-		numOfClusters = Integer.parseInt(choicePanel.getSelectedItem());
-		int featureSize = featureVector.size();
-		boolean ch[] = new boolean[featureSize];
-		for(int i=0;i<featureSize;i++)
-			ch[i] = true;
-			
-		for(int i=0;i<numOfClusters;i++){
-			Nodes temp;
-			Cluster tempCluster = new Cluster();
-			int r = Math.abs(random.nextInt() % featureSize);
-			if(ch[r]){
-				temp = featureVector.get(r);
-				tempCluster.x = temp.x;
-				tempCluster.y = temp.y;
-						if (i == 0) tempCluster.color = Color.GREEN;
-	               else if (i == 1) tempCluster.color = Color.RED;
-	               else if (i == 2) tempCluster.color = Color.BLUE;
-	               else if (i == 3) tempCluster.color = Color.YELLOW;
-	               else if (i == 4) tempCluster.color = Color.ORANGE;
-	               else if (i == 5) tempCluster.color = Color.MAGENTA;
-	               else if (i == 6) tempCluster.color = Color.CYAN;
-	               else if (i == 7) tempCluster.color = Color.GRAY;
-	            cluster.add(tempCluster);
-	            ch[r] = false;
-	         }
-		}
-		step = 1;
+	private void step1() {
+	abort = false;
+	numOfClusters = Integer.parseInt(choicePanel.getSelectedItem());
+	int featureSize = featureVector.size();
+	boolean ch[] = new boolean[featureSize];
+	for(int i=0;i<featureSize;i++)
+		ch[i] = true;
+		
+	for(int i=0;i<numOfClusters;i++){
+		Nodes temp;
+		Cluster tempCluster = new Cluster();
+		int r = Math.abs(random.nextInt() % featureSize);
+		if(ch[r]){
+			temp = featureVector.get(r);
+			tempCluster.x = temp.x;
+			tempCluster.y = temp.y;
+					if (i == 0) tempCluster.color = Color.GREEN;
+			   else if (i == 1) tempCluster.color = Color.RED;
+			   else if (i == 2) tempCluster.color = Color.BLUE;
+			   else if (i == 3) tempCluster.color = Color.YELLOW;
+			   else if (i == 4) tempCluster.color = Color.ORANGE;
+			   else if (i == 5) tempCluster.color = Color.MAGENTA;
+			   else if (i == 6) tempCluster.color = Color.CYAN;
+			   else if (i == 7) tempCluster.color = Color.GRAY;
+			cluster.add(tempCluster);
+			ch[r] = false;
+		 }
 	}
-	
-		private void step2() {
-			Nodes temp;
-			Cluster tempCluster;
-			for(int i=0;i<featureVector.size();i++){
-				temp = featureVector.get(i);
-				int indexOfMin = 0;
-				double min_distance = 99999999.0;
-				for(int j=0;j<cluster.size();j++){
-				tempCluster = cluster.get(j);
-				double dist = Point.distance(temp.x, temp.y,tempCluster.x,tempCluster.y);
-					if(dist < min_distance){
-						min_distance = dist;
-						indexOfMin = j;
-					}
-				}
-				tempCluster = cluster.get(indexOfMin);
-				temp.color = tempCluster.color;
-			}
-			step=2;
-		}
-	
-		private void step3() {
-			Cluster tempCluster;
-			Nodes temp;
-			double change = 0.0;
-			for(int i=0;i<cluster.size();i++){
-				tempCluster = cluster.get(i);
-				p.x=0;
-				p.y=0;
-				int count = 0;
-				for(int j=0;j<featureVector.size();j++){
-					temp = featureVector.get(j);
-					if(temp.color == tempCluster.color){
-						p.x+=temp.x;
-						p.y+=temp.y;
-						count++;
-					}
-				}
-				if(count>0){
-					 change+=Point.distance(tempCluster.x,tempCluster.y,p.x/count,p.y/count);
-					 tempCluster.x = p.x/count;
-					 tempCluster.y = p.y/count;
+	step = 1;
+}
+
+	private void step2() {
+		Nodes temp;
+		Cluster tempCluster;
+		for(int i=0;i<featureVector.size();i++){
+			temp = featureVector.get(i);
+			int indexOfMin = 0;
+			double min_distance = 99999999.0;
+			for(int j=0;j<cluster.size();j++){
+			tempCluster = cluster.get(j);
+			double dist = Point.distance(temp.x, temp.y,tempCluster.x,tempCluster.y);
+				if(dist < min_distance){
+					min_distance = dist;
+					indexOfMin = j;
 				}
 			}
-			if(change<0.1) abort=true;
-			step =3;
+			tempCluster = cluster.get(indexOfMin);
+			temp.color = tempCluster.color;
 		}
-	
-	
+		step=2;
+	}
+
+	private void step3() {
+		Cluster tempCluster;
+		Nodes temp;
+		double change = 0.0;
+		for(int i=0;i<cluster.size();i++){
+			tempCluster = cluster.get(i);
+			p.x=0;
+			p.y=0;
+			int count = 0;
+			for(int j=0;j<featureVector.size();j++){
+				temp = featureVector.get(j);
+				if(temp.color == tempCluster.color){
+					p.x+=temp.x;
+					p.y+=temp.y;
+					count++;
+				}
+			}
+			if(count>0){
+				 change+=Point.distance(tempCluster.x,tempCluster.y,p.x/count,p.y/count);
+				 tempCluster.x = p.x/count;
+				 tempCluster.y = p.y/count;
+			}
+		}
+		if(change<0.1) abort=true;
+		step =3;
+	}
 }
